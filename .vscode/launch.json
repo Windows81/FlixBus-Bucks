@@ -1,0 +1,15 @@
+{
+	"configurations": [
+		{
+			"name": "Python Debugger: Collect Prices to `latest-prices.txt`",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/main.py",
+			"console": "integratedTerminal",
+			"args": [
+				">",
+				"latest-prices.txt"
+			]
+		}
+	]
+}
