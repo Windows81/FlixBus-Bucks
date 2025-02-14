@@ -2,32 +2,64 @@ import datetime
 import functools
 import requests
 
-BASE_CURRENCY = 'USD'
+BASE_CURRENCY = "EUR"
 
 FLIXBUS_CURRENCIES = {
-    'EUR': "€",
-    'CHF': "CHF",
-    'CZK': "Kč",
-    'SEK': "kr",
-    'GBP': "£",
-    'DKK': "kr",
-    'HRK': "kn",
-    'PLN': "zł",
-    'HUF': "ft",
-    'NOK': "kr",
-    'BGN': "лв",
-    'RON': "RON",
-    'RSD': "RSD",
-    'USD': "$",
-    'ALL': "L",
-    'BAM': "KM",
-    'UAH': "₴",
-    'MKD': "ден",
-    'TRY': "₺",
-    'BRL': "R$",
-    'CAD': "CA$",
-    'MXN': "Mex$",
-    'CLP': "$"
+    "AED",
+    "ALL",
+    "ARS",
+    "AUD",
+    "BAM",
+    "BGN",
+    "BOB",
+    "BRL",
+    "CAD",
+    "CHF",
+    "CLP",
+    "CNY",
+    "COP",
+    "CRC",
+    "CZK",
+    "DKK",
+    "EUR",
+    "GBP",
+    "GTQ",
+    "HKD",
+    "HNL",
+    "HUF",
+    "IDR",
+    "ILS",
+    "INR",
+    "ISK",
+    "JPY",
+    "KRW",
+    "MKD",
+    "MOP",
+    "MXN",
+    "MYR",
+    "NIO",
+    "NOK",
+    "NZD",
+    "PEN",
+    "PHP",
+    "PLN",
+    "PYG",
+    "QAR",
+    "RON",
+    "RSD",
+    "RUB",
+    "SAR",
+    "SEK",
+    "SGD",
+    "THB",
+    "TRY",
+    "TWD",
+    "UAH",
+    "USD",
+    "UYU",
+    "VEF",
+    "VND",
+    "ZAR",
 }
 
 
@@ -86,7 +118,7 @@ def get_prices(currency: str = BASE_CURRENCY) -> list[float]:
 if __name__ == '__main__':
     price_dict = {
         c: get_prices(c)
-        for c in FLIXBUS_CURRENCIES.keys()
+        for c in FLIXBUS_CURRENCIES
     }
     price_list = sorted(
         filter(
