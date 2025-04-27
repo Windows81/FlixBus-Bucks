@@ -66,8 +66,8 @@ FLIXBUS_CURRENCIES = {
 @functools.cache
 def get_info(currency: str = BASE_CURRENCY) -> dict:
     params = {
-        'from_city_id': '490d29d8-7151-4e05-86df-68fba4f000be',
-        'to_city_id': '30e3dcd2-f9a7-4900-8f39-7a77c261904e',
+        'from_city_id': '490d29d8-7151-4e05-86df-68fba4f000be',  # Los Angeles, CA
+        'to_city_id': '30e3dcd2-f9a7-4900-8f39-7a77c261904e',  # Las Vegas, NV
         'departure_date': datetime.datetime.now().strftime(r'%d.%m.%Y'),
         'products': '{"adult":1}',
         'currency': currency,
