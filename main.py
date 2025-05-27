@@ -86,6 +86,7 @@ def get_trips(currency: str = BASE_CURRENCY) -> list:
     return get_info(currency).get('trips', [])
 
 
+@functools.cache
 def get_additional_fee(currency: str = BASE_CURRENCY) -> float:
     return sum(
         float(t.get('fee_amount', '0'))
@@ -102,17 +103,24 @@ def load_conversion_rates() -> dict[str, float]:
 
 
 @functools.cache
-def convert_to_base(value: float, currency: str = 'USD') -> float:
+def convert_to_base(value: float, currency: str = BASE_CURRENCY) -> float:
     return value / load_conversion_rates()[currency]
 
 
-def get_prices(currency: str = BASE_CURRENCY) -> list[float]:
+def get_prices(currency: str = BASE_CURRENCY) -> tuple[list[float], float] | None:
     extra = get_additional_fee(currency)
-    return [
-        convert_to_base(v['price']['original'] + extra, currency)
-        for tr in get_trips(currency)
-        for v in tr['results'].values()
-    ]
+    trips = get_trips(currency)
+    if len(trips) == 0:
+        return None
+
+    return (
+        [
+            convert_to_base(v['price']['original'] + extra, currency)
+            for tr in trips
+            for v in tr['results'].values()
+        ],
+        convert_to_base(extra, currency),
+    )
 
 
 if __name__ == '__main__':
@@ -122,19 +130,34 @@ if __name__ == '__main__':
     }
     price_list = sorted(
         filter(
-            lambda t: t[1],
+            lambda t: t[1] is not None,
             price_dict.items(),
         ),
-        key=lambda t: t[1],
+        key=lambda t: t[1][0][0],
     )
 
-    base_prices = price_dict[BASE_CURRENCY]
-    for (c, prices) in price_list:
-        price_str = ', '.join(f'{p:.2f}' for p in prices[:4])
-        precent = f'{100. * prices[0] / base_prices[0]: 7.2f}'
-        curr_str = (
-            c.upper()
-            if c == BASE_CURRENCY
-            else c.lower()
-        )
-        print(f"{curr_str} {precent}% - [{price_str}] {BASE_CURRENCY}")
+    base_prices, base_extra = price_dict[BASE_CURRENCY]
+    for (c, (prices, extra)) in price_list:
+        print(f"%s %7.2f%% - [%s] %s%s" % (
+            # Currency string
+            (
+                c.upper()
+                if c == BASE_CURRENCY
+                else c.lower()
+            ),
+
+            # Percentage of base currency price
+            100. * prices[0] / base_prices[0],
+
+            # Converted prices for a subset of trip results
+            ', '.join(f'{p:.2f}' for p in prices[:4]),
+
+            # Appended extra charge
+            (
+                f'{extra:+.2f} '
+                if extra > 0
+                else ''
+            ),
+
+            BASE_CURRENCY,
+        ))
