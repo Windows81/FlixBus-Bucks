@@ -152,12 +152,12 @@ if __name__ == '__main__':
             # Converted prices for a subset of trip results
             ', '.join(f'{p:.2f}' for p in prices[:4]),
 
+            BASE_CURRENCY,
+
             # Appended extra charge
             (
-                f'{extra:+.2f} '
+                f' ({extra:+.2f} inc.)'
                 if extra > 0
                 else ''
             ),
-
-            BASE_CURRENCY,
         ))
