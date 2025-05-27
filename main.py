@@ -1,3 +1,11 @@
+# pyright: reportMissingTypeArgument = false
+# pyright: reportUnknownArgumentType = false
+# pyright: reportUnknownLambdaType = false
+# pyright: reportUnknownVariableType = false
+# pyright: reportUnknownMemberType  = false
+# pyright: reportUnknownParameterType = false
+# pyright: reportAny = false
+
 import datetime
 import functools
 import requests
@@ -65,6 +73,18 @@ FLIXBUS_CURRENCIES = {
 
 @functools.cache
 def get_info(currency: str = BASE_CURRENCY) -> dict:
+    '''
+    Parameters for the HTTP request to the Flixbus API.
+
+    :param from_city_id: UUID representing the departure city.
+    :param to_city_id: UUID representing the destination city.
+    :param departure_date: Date of departure in the format DD.MM.YYYY.
+    :param products: JSON string specifying how many adults, children, bikes, et c. to include in the query.
+    :param currency: Currency code used for the search.
+    :param locale: Language and region setting for the response.
+    :param search_by: Likely the method to search for routes (in this case, 'cities').
+    :param include_after_midnight_rides: Whether to include rides arriving after midnight.
+    '''
     params = {
         'from_city_id': '490d29d8-7151-4e05-86df-68fba4f000be',  # Los Angeles, CA
         'to_city_id': '30e3dcd2-f9a7-4900-8f39-7a77c261904e',  # Las Vegas, NV
@@ -88,14 +108,24 @@ def get_trips(currency: str = BASE_CURRENCY) -> list:
 
 @functools.cache
 def get_additional_fee(currency: str = BASE_CURRENCY) -> float:
-    return sum(
+    '''
+    Mimics the behavior of the JavaScript function getPlatformFee by determining the appropriate additional fee based on global platform fees and feature flags.
+
+    No one should charge more for bus service based on opaque flags.
+    '''
+    gen = (
         float(t.get('fee_amount', '0'))
         for t in get_info(currency).get('global_platform_fees', [])
+        if t.get('abTestFlag') is None
     )
+    return next(gen, 0)
 
 
 @functools.cache
 def load_conversion_rates() -> dict[str, float]:
+    '''
+    Fetches the latest currency conversion rates from an external API and returns them as a dictionary mapping currency codes to their respective rates relative to the base currency.
+    '''
     response = requests.get(
         f'https://v6.exchangerate-api.com/v6/c42b6ac038130001a023e5a4/latest/%s' % BASE_CURRENCY
     )
@@ -108,6 +138,15 @@ def convert_to_base(value: float, currency: str = BASE_CURRENCY) -> float:
 
 
 def get_prices(currency: str = BASE_CURRENCY) -> tuple[list[float], float] | None:
+    '''
+    Retrieves the prices of available bus trips and the additional platform fee for the specified currency.
+
+    Args:
+        currency(str): The currency code to use for pricing information. Defaults to BASE_CURRENCY.
+
+    Returns:
+        tuple[list[float], float] | None: A tuple containing a list of trip prices and the additional platform fee. Returns None if no trip data is available.
+    '''
     extra = get_additional_fee(currency)
     trips = get_trips(currency)
     if len(trips) == 0:
@@ -125,14 +164,12 @@ def get_prices(currency: str = BASE_CURRENCY) -> tuple[list[float], float] | Non
 
 if __name__ == '__main__':
     price_dict = {
-        c: get_prices(c)
+        c: p
         for c in FLIXBUS_CURRENCIES
+        if (p := get_prices(c)) is not None
     }
     price_list = sorted(
-        filter(
-            lambda t: t[1] is not None,
-            price_dict.items(),
-        ),
+        price_dict.items(),
         key=lambda t: t[1][0][0],
     )
 
