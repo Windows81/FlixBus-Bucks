@@ -88,7 +88,9 @@ def get_info(currency: str = BASE_CURRENCY) -> dict:
     params = {
         'from_city_id': '490d29d8-7151-4e05-86df-68fba4f000be',  # Los Angeles, CA
         'to_city_id': '30e3dcd2-f9a7-4900-8f39-7a77c261904e',  # Las Vegas, NV
-        'departure_date': datetime.datetime.now().strftime(r'%d.%m.%Y'),
+        'departure_date': (
+            datetime.datetime.now() + datetime.timedelta(days=7)
+        ).strftime(r'%d.%m.%Y'),
         'products': '{"adult":1}',
         'currency': currency,
         'locale': 'en_US',
@@ -132,7 +134,6 @@ def load_conversion_rates() -> dict[str, float]:
     return response.json()['conversion_rates']
 
 
-@functools.cache
 def convert_to_base(value: float, currency: str = BASE_CURRENCY) -> float:
     return value / load_conversion_rates()[currency]
 
@@ -152,11 +153,17 @@ def get_prices(currency: str = BASE_CURRENCY) -> tuple[list[float], float] | Non
     if len(trips) == 0:
         return None
 
+    original_prices = [
+        v['price']['original']
+        for tr in trips
+        for v in tr['results'].values()
+    ]
+
     return (
         [
-            convert_to_base(v['price']['original'] + extra, currency)
-            for tr in trips
-            for v in tr['results'].values()
+            convert_to_base(price + extra, currency)
+            for price in original_prices
+            if price > 0
         ],
         convert_to_base(extra, currency),
     )
