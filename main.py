@@ -153,11 +153,11 @@ def get_prices(currency: str = BASE_CURRENCY) -> tuple[list[float], float] | Non
     if len(trips) == 0:
         return None
 
-    original_prices = [
+    original_prices = sorted(set(
         v['price']['original']
         for tr in trips
         for v in tr['results'].values()
-    ]
+    ))
 
     return (
         [
