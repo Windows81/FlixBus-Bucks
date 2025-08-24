@@ -10,4 +10,4 @@ Of course, not all prices are made equally. To my knowledge, only transactions p
 
 I've observed that using FlixBus with USD is the most expensive option (don't forget the $3.99 service fee) whereas the best currency usually changes over the years. For example, on 2024-11-18, Canadian dollars used to cost 93% as much as US dollars. However, as of 2025-02-15, CAD-to-USD was priced at 98% and other currencies reach as low as 92%.
 
-Data is collected from an average of prices given for trips between Los Ángeles and Las Vegas set to take place 7 days from the date of last update.
+Data is collected from the lowest offered price given for a query of trips between Los Ángeles and Las Vegas set to take place 7 days after the date of last update.
