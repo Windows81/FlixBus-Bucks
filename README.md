@@ -6,7 +6,7 @@ Run this to collect the latest FlixBus currency biases:
 python main.py > "./latest-prices.txt"
 ```
 
-FlixBus does service in lots of different countries. They change their prices depending on which of the company's regional websites you're using.
+FlixBus provide service in lots of different countries. They change their prices depending on which of the company's regional websites you're using.
 
 The following companies also operate with FlixBus' systems:
 - Greyhound (US)
