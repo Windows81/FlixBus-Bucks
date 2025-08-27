@@ -22,4 +22,4 @@ Data is collected from the lowest offered price given for a query of trips betwe
 
 ## Other Discounts
 
-For the Turkish site (Kamil Koç), apply `KKSALL` for 0.85x price on Tuesdays[[1]](https://www.flixbus.com.tr/kampanyali-otobus-biletleri/sallanan-sali).
+Apply `KKSALL` for 0.85x price on Tuesdays[[1]](https://www.flixbus.com.tr/kampanyali-otobus-biletleri/sallanan-sali).  This is applicable for all FlixBus sites.
